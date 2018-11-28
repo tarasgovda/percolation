@@ -1,53 +1,63 @@
 /* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
+ *  Name: Percolation
+ *  Date: 26-11-2018
+ *  Description: Class for Monte Carlo simulation
  **************************************************************************** */
 
-import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
-    private int gridSize;
-    private int[][] grid;
+    private final int gridSize;
+    private final boolean[][] grid;
     private int numberOfOpenSites;
-    private WeightedQuickUnionUF weightedQuickUnionUF;
+    private final WeightedQuickUnionUF weightedQuickUnionUF;
+    private final WeightedQuickUnionUF gridOnly;
 
 
     public Percolation(int n)  {
-        this.grid = new int[n + 1][n + 1];
+        if (n <= 0) throw new IllegalArgumentException("grid size should be a positive number");
+        this.grid = new boolean[n + 1][n + 1];
         this.gridSize = n;
         this.numberOfOpenSites = 0;
         this.weightedQuickUnionUF = new WeightedQuickUnionUF(n*n + 2);
+        this.gridOnly = new WeightedQuickUnionUF(n*n + 1);
     }
 
     public void open(int row, int col) {
         validateIndices(row, col);
-        grid[row][col] = 1;
+        if (isOpen(row, col)) {
+            return;
+        }
+        grid[row][col] = true;
 
         // left
         if (col != 1 && isOpen(row, col - 1)) {
             weightedQuickUnionUF.union(xyTo1D(row, col - 1), xyTo1D(row, col));
+            gridOnly.union(xyTo1D(row, col - 1), xyTo1D(row, col));
         }
 
         // right
         if (col != gridSize && isOpen(row, col + 1)) {
             weightedQuickUnionUF.union(xyTo1D(row, col + 1), xyTo1D(row, col));
+            gridOnly.union(xyTo1D(row, col + 1), xyTo1D(row, col));
         }
 
         // top
         if (row != 1 && isOpen(row - 1, col)) {
             weightedQuickUnionUF.union(xyTo1D(row - 1, col), xyTo1D(row, col));
+            gridOnly.union(xyTo1D(row - 1, col), xyTo1D(row, col));
         } else if (row == 1) {
+            gridOnly.union(0, xyTo1D(row, col));
             weightedQuickUnionUF.union(0, xyTo1D(row, col));
         }
 
         // bottom
         if (row != gridSize && isOpen(row + 1, col)) {
             weightedQuickUnionUF.union(xyTo1D(row + 1, col), xyTo1D(row, col));
+            gridOnly.union(xyTo1D(row + 1, col), xyTo1D(row, col));
         } else if (row == gridSize) {
-            weightedQuickUnionUF.union(xyTo1D(row, col), gridSize + 1);
+            weightedQuickUnionUF.union(xyTo1D(row, col), gridSize*gridSize + 1);
         }
 
         numberOfOpenSites++;
@@ -55,41 +65,23 @@ public class Percolation {
     public boolean isOpen(int row, int col) {
         validateIndices(row, col);
 
-        return grid[row][col] == 1;
+        return grid[row][col];
     }
     public boolean isFull(int row, int col) {
         validateIndices(row, col);
 
-        return weightedQuickUnionUF.connected(0, xyTo1D(row, col));
+        return gridOnly.connected(0, xyTo1D(row, col));
     }
     public int numberOfOpenSites() {
         return numberOfOpenSites;
     }
     public boolean percolates() {
-        return weightedQuickUnionUF.connected(0, gridSize + 1);
+        return weightedQuickUnionUF.connected(0,
+                                              gridSize*gridSize + 1);
     }
 
     public static void main(String[] args) {
-
-        int size = 20;
-        Percolation percolation = new Percolation(size);
-        int randRow;
-        int randCol;
-        while (true) {
-           randRow = StdRandom.uniform(20) + 1;
-           randCol = StdRandom.uniform(20) + 1;
-
-           if (percolation.isOpen(randRow, randCol)) continue;
-
-           percolation.open(randRow, randCol);
-           if (!percolation.percolates()) continue;
-
-           double openSites = (double) percolation.numberOfOpenSites();
-           double threshlod = openSites / (size*size);
-           System.out.println(threshlod);
-           System.out.println((int) openSites);
-           break;
-       }
+        // do your tests here
     }
 
     private int xyTo1D(int x, int y) {
