@@ -8,9 +8,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
-    private Node first = null;
-    private Node last = null;
-    private int size = 0;
+    private Node first;
+    private Node last;
+    private int size;
 
     public Deque() {
         this.first = null;
