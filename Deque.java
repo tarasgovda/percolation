@@ -73,6 +73,8 @@ public class Deque<Item> implements Iterable<Item> {
         this.first = first.next;
         if (this.first == null) {
             this.last = null;
+        } else {
+            this.first.prev = null;
         }
 
         size--;
@@ -88,6 +90,8 @@ public class Deque<Item> implements Iterable<Item> {
         this.last = last.prev;
         if (this.last == null) {
             this.first = null;
+        } else {
+            this.last.next = null;
         }
 
         size--;
@@ -96,11 +100,15 @@ public class Deque<Item> implements Iterable<Item> {
 
     private class DequeIterator implements Iterator<Item> {
 
-        private Node current = first;
+        private Node current;
+
+        DequeIterator() {
+            current = first;
+        }
 
         @Override
         public boolean hasNext() {
-            return current.next != null;
+            return current != null;
         }
 
         @Override
@@ -121,7 +129,7 @@ public class Deque<Item> implements Iterable<Item> {
 
 
     private class Node {
-        private Item data;
+        private final Item data;
         private Node prev;
         private Node next;
 
@@ -135,12 +143,18 @@ public class Deque<Item> implements Iterable<Item> {
         Deque<String> deque = new Deque<>();
 
         deque.addFirst("Test");
-        deque.removeLast();
+        // deque.removeLast();
         System.out.println(deque.isEmpty());
-        deque.addLast("Again");
+        deque.addFirst("Again");
         deque.addFirst("lalal");
         System.out.println(deque.removeLast());
-        System.out.println(deque.isEmpty());
-        System.out.println(deque.size());
+        // System.out.println(deque.isEmpty());
+        // System.out.println(deque.size());
+
+        // Iterator<String> iterator = deque.iterator();
+
+        for (String s: deque) {
+            System.out.println(s);
+        }
     }
 }

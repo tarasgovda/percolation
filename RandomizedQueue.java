@@ -12,20 +12,20 @@ import java.util.NoSuchElementException;
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private Item[] arr;
-    private int N;
+    private int n;
 
 
     public RandomizedQueue() {
         this.arr = (Item[]) new Object[1];
-        this.N = 0;
+        this.n = 0;
     }
 
     public boolean isEmpty()  {
-        return N == 0;
+        return n == 0;
     }
 
     public int size() {
-        return N;
+        return n;
     }
 
     public void enqueue(Item item) {
@@ -33,20 +33,20 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new IllegalArgumentException();
         }
 
-        if (N == arr.length) { resize(2 * N); }
-        this.arr[N++] = item;
+        if (n == arr.length) { resize(2 * n); }
+        this.arr[n++] = item;
     }
     public Item dequeue() {
         if (isEmpty()) {
             throw new NoSuchElementException();
         }
 
-        int rand = StdRandom.uniform(N);
+        int rand = StdRandom.uniform(n);
         swapWithLast(rand);
 
-        Item item = arr[--N];
-        arr[N] = null;
-        if(N > 0 && N == arr.length / 4) { resize(arr.length / 2); }
+        Item item = arr[--n];
+        arr[n] = null;
+        if (n > 0 && n == arr.length / 4) { resize(arr.length / 2); }
         return item;
     }
 
@@ -55,9 +55,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException();
         }
 
-        int rand = StdRandom.uniform(N);
+        int rand = StdRandom.uniform(n);
         swapWithLast(rand);
-        return arr[N - 1];
+        return arr[n - 1];
     }
 
     @Override
@@ -67,7 +67,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private void resize(int newSize) {
         Item[] copy = (Item[]) new Object[newSize];
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < n; i++) {
             copy[i] = arr[i];
         }
         arr = copy;
@@ -75,8 +75,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private void swapWithLast(int index) {
         Item temp = arr[index];
-        arr[index] = arr[N - 1];
-        arr[N - 1] = temp;
+        arr[index] = arr[n - 1];
+        arr[n - 1] = temp;
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
@@ -85,9 +85,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         private int index;
 
         RandomizedQueueIterator() {
-            this.index = N;
-            workCopy = (Item[]) new Object[N];
-            for (int i = 0; i < N; i++) {
+            this.index = n;
+            workCopy = (Item[]) new Object[n];
+            for (int i = 0; i < n; i++) {
                 workCopy[i] = arr[i];
             }
             StdRandom.shuffle(workCopy);
