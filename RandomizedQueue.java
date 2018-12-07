@@ -33,7 +33,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new IllegalArgumentException();
         }
 
-        if (N == arr.length) { resize(2 * N);}
+        if (N == arr.length) { resize(2 * N); }
         this.arr[N++] = item;
     }
     public Item dequeue() {
@@ -46,7 +46,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         Item item = arr[--N];
         arr[N] = null;
-        if(N > 0 && N == arr.length / 4) { resize(arr.length / 2);}
+        if(N > 0 && N == arr.length / 4) { resize(arr.length / 2); }
         return item;
     }
 
