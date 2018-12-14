@@ -42,7 +42,7 @@ public class FastCollinearPoints {
                     counter++;
                     if (j == (temp.length - 1)) {
                         if (counter > 3) {
-                            Arrays.sort(temp, (counter - 1), j); //doesn't work???
+                            Arrays.sort(temp, (j - (counter - 1)), j); //doesn't work???
                             if (!checkIfContainspoint(max, temp[j-1])) {
                                 max.add(temp[j-1]);
                                 lineSegments.add(new LineSegment(temp[0], temp[j - 1]));
@@ -52,7 +52,7 @@ public class FastCollinearPoints {
                     }
                 } else {
                     if (counter > 3) {
-                        Arrays.sort(temp, (counter - 1), j);
+                        Arrays.sort(temp, (j - (counter - 1)), j); //doesn't work???
                         if (!checkIfContainspoint(max, temp[j-1])) {
                             max.add(temp[j-1]);
                             lineSegments.add(new LineSegment(temp[0], temp[j - 1]));
