@@ -15,25 +15,27 @@ import java.util.List;
 
 public class FastCollinearPoints {
 
-    private int numOfSegments;
-    private List<LineSegment> lineSegments;
+    private final int numOfSegments;
+    private  final List<LineSegment> lineSegments;
 
     public FastCollinearPoints(Point[] points) {
         validateInput(points);
 
-        numOfSegments = 0;
+        int num = 0;
         lineSegments = new ArrayList<>();
-        Arrays.sort(points);
+        Point[] copy = new Point[points.length];
         int counter;
         Comparator<Point> order;
-        List<Point> max = new ArrayList<>();
-        Point[] temp = new Point[points.length];
+        Point[] temp = new Point[copy.length];
         for (int i = 0; i < temp.length; i++) {
-            temp[i] = points[i];
+            copy[i] = points[i];
         }
-        for (int i = 0; i < points.length; i++) {
-            if (checkIfContainspoint(max, points[i])) continue;
-            order = points[i].slopeOrder();
+        Arrays.sort(copy);
+        for (int i = 0; i < temp.length; i++) {
+            temp[i] = copy[i];
+        }
+        for (int i = 0; i < copy.length; i++) {
+            order = copy[i].slopeOrder();
             Arrays.sort(temp, order);
             counter = 2;
             for (int j = 2; j < temp.length; j++) {
@@ -42,21 +44,19 @@ public class FastCollinearPoints {
                     counter++;
                     if (j == (temp.length - 1)) {
                         if (counter > 3) {
-                            Arrays.sort(temp, (j - (counter - 1)), j); //doesn't work???
-                            if (!checkIfContainspoint(max, temp[j-1])) {
-                                max.add(temp[j-1]);
-                                lineSegments.add(new LineSegment(temp[0], temp[j - 1]));
-                                numOfSegments++;
+                            Arrays.sort(temp, (j - (counter - 2)), j + 1);
+                            if (temp[0].compareTo(temp[j - (counter - 2)]) < 0) {
+                                lineSegments.add(new LineSegment(temp[0], temp[j]));
+                                num++;
                             }
                         }
                     }
                 } else {
                     if (counter > 3) {
-                        Arrays.sort(temp, (j - (counter - 1)), j); //doesn't work???
-                        if (!checkIfContainspoint(max, temp[j-1])) {
-                            max.add(temp[j-1]);
+                        Arrays.sort(temp, (j - (counter - 1)), j);
+                        if (temp[0].compareTo(temp[j - (counter - 1)]) < 0) {
                             lineSegments.add(new LineSegment(temp[0], temp[j - 1]));
-                            numOfSegments++;
+                            num++;
                         }
                     }
                     counter = 2;
@@ -64,26 +64,20 @@ public class FastCollinearPoints {
             }
         }
 
+        numOfSegments = num;
     }
 
     private void validateInput(Point[] points) {
         if (points == null) throw new IllegalArgumentException();
 
-        for (int i = 0; i < points.length - 1; i++) {
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) throw new IllegalArgumentException();
             for (int j = i + 1; j < points.length; j++) {
                 if (points[j] == null) throw new IllegalArgumentException();
                 if (points[i].compareTo(points[j]) == 0) throw new IllegalArgumentException();
 
             }
         }
-    }
-
-    private boolean checkIfContainspoint(List<Point> points, Point pointToCheck) {
-        for (Point point: points) {
-            if (pointToCheck.compareTo(point) == 0) return true;
-        }
-
-        return false;
     }
 
     public int numberOfSegments() {

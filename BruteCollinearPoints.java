@@ -14,39 +14,46 @@ import java.util.List;
 
 public class BruteCollinearPoints {
 
-    private int numOfSegments;
-    private List<LineSegment> lineSegments;
+    private final int numOfSegments;
+    private final List<LineSegment> lineSegments;
 
     public BruteCollinearPoints(Point[] points) {
 
         validateInput(points);
 
-        numOfSegments = 0;
+        int num = 0;
         lineSegments = new ArrayList<>();
 
-        Arrays.sort(points);
+        Point[] copy = new Point[points.length];
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = points[i];
+        }
 
-        for (int i = 0; i < points.length- 3; i++) {
-            for (int j = i + 1; j < points.length - 2; j++) {
-                for (int k = j + 1; k < points.length - 1; k++) {
-                    if (points[i].slopeTo(points[j]) != points[j].slopeTo(points[k])) continue;
-                    for (int m = k + 1; m < points.length; m++) {
-                        if ((points[i].slopeTo(points[j]) == points[j].slopeTo(points[k])) &&
-                                (points[j].slopeTo(points[k]) == points[k].slopeTo(points[m]))) {
-                            numOfSegments++;
-                            lineSegments.add(new LineSegment(points[i], points[m]));
+        Arrays.sort(copy);
+
+        for (int i = 0; i < copy.length- 3; i++) {
+            for (int j = i + 1; j < copy.length - 2; j++) {
+                for (int k = j + 1; k < copy.length - 1; k++) {
+                    if (copy[i].slopeTo(copy[j]) != copy[j].slopeTo(copy[k])) continue;
+                    for (int m = k + 1; m < copy.length; m++) {
+                        if ((copy[i].slopeTo(copy[j]) == copy[j].slopeTo(copy[k])) &&
+                                (copy[j].slopeTo(copy[k]) == copy[k].slopeTo(copy[m]))) {
+                            num++;
+                            lineSegments.add(new LineSegment(copy[i], copy[m]));
                         }
                     }
                 }
             }
         }
 
+        numOfSegments = num;
     }
 
     private void validateInput(Point[] points) {
         if (points == null) throw new IllegalArgumentException();
 
-        for (int i = 0; i < points.length - 1; i++) {
+        for (int i = 0; i < points.length; i++) {
+            if (points[i] == null) throw new IllegalArgumentException();
             for (int j = i + 1; j < points.length; j++) {
                 if (points[j] == null) throw new IllegalArgumentException();
                 if (points[i].compareTo(points[j]) == 0) throw new IllegalArgumentException();
