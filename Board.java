@@ -5,7 +5,6 @@
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +12,7 @@ import java.util.List;
 public class Board {
 
     private int[] blocks;
+    private int priority;
 
     public Board(int[][] blocks) {
         this.blocks = new int[(int) Math.pow(blocks.length, 2)];
@@ -21,6 +21,8 @@ public class Board {
                 this.blocks[blocks.length * i + j] = blocks[i][j];
             }
         }
+
+        priority = calculateManhattan();
     }
 
     public int dimension() {
@@ -38,6 +40,10 @@ public class Board {
     }
 
     public int manhattan() {
+        return priority;
+    }
+
+    private int calculateManhattan() {
         int counter = 0;
         int goalPosition;
         for (int i = 0; i < blocks.length; i++) {
@@ -73,10 +79,14 @@ public class Board {
     }
 
     public Board twin() {
-        int index;
-        do {
-            index = StdRandom.uniform(dimension());
-        } while (blocks[index] == 0 || blocks[index + dimension()] == 0);
+        int index = -1;
+
+        for (int i = 0; i < blocks.length; i++) {
+            if (blocks[i] != 0 && blocks[i + dimension()] != 0) {
+                index = i;
+                break;
+            }
+        }
 
         return new Board(toTwoDimesnions(index, index+dimension()));
     }
@@ -105,7 +115,7 @@ public class Board {
             neighbors.add(new Board(toTwoDimesnions(zeroIndex, zeroIndex - 1)));
         }
 
-        if (zeroIndex + 1 % dimension() != 0) {
+        if ((zeroIndex + 1) % dimension() != 0) {
             neighbors.add(new Board(toTwoDimesnions(zeroIndex, zeroIndex + 1)));
         }
 
@@ -166,11 +176,18 @@ public class Board {
         System.out.println(initial.hamming());
         System.out.println(initial.manhattan());
         System.out.println(initial.twin().toString());
-        System.out.println("---------");
-        for (Board board: initial.neighbors()) {
-            System.out.println(board.toString());
-            System.out.println("---------");
-        }
+        System.out.println(initial.twin().toString());
+        System.out.println(initial.twin().toString());
+        // System.out.println("---------");
+        // for (Board board: initial.neighbors()) {
+        //     System.out.println(board.toString());
+        //     System.out.println("---------");
+        // }
+        //
+        // System.out.println(initial.isGoal());
+        // System.out.println(initial.twin().isGoal());
+        // System.out.println(initial.equals(initial));
+
 
 
     }
