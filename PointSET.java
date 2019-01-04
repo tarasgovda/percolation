@@ -7,6 +7,8 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class PointSET {
@@ -40,16 +42,36 @@ public class PointSET {
             point2D.draw();
         }
     }
-    public Iterable<Point2D> range(RectHV rect) {
 
-    }            // all points that are inside the rectangle (or on the boundary)
+    public Iterable<Point2D> range(RectHV rect) {
+        if (rect == null) throw new IllegalArgumentException();
+
+        List<Point2D> result = new ArrayList<>();
+
+        for (Point2D point2D: treeSet) {
+
+            if (rect.contains(point2D)) {
+                result.add(point2D);
+            }
+        }
+
+        return result;
+
+    }
+
     public Point2D nearest(Point2D p) {
         if (p == null) throw new IllegalArgumentException();
 
         Point2D nearest = null;
-        for (Point2D point2D: treeSet) {
+        double minDist = Double.MAX_VALUE;
 
+        for (Point2D point2D: treeSet) {
+            if (p.distanceSquaredTo(point2D) < minDist) {
+                nearest = point2D;
+            }
         }
+
+        return nearest;
     }
 
     public static void main(String[] args) {
