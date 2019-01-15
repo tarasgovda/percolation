@@ -8,6 +8,7 @@ import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class KdTree {
@@ -134,24 +135,62 @@ public class KdTree {
 
         point2D.drawTo(point2D1);
 
+        verticalSplit = !verticalSplit;
 
-        draw(node.lb, !verticalSplit);
-        draw(node.rt, !verticalSplit);
+        draw(node.lb, verticalSplit);
+        draw(node.rt, verticalSplit);
     }
+
+
+    public Iterable<Point2D> range(RectHV rectHV) {
+        ArrayList<Point2D> result = new ArrayList<>();
+
+        range(root, rectHV, result);
+
+        return result;
+    }
+
+
+    private void range(Node node, RectHV rectHV, ArrayList<Point2D> result) {
+        if (node == null || !node.rect.intersects(rectHV)) return;
+
+        if (rectHV.contains(node.p)) result.add(node.p);
+
+        range(node.lb, rectHV, result);
+        range(node.rt, rectHV, result);
+    }
+
+
+    public Point2D nearest(Point2D point2D) {
+        return nearest(root, point2D, null);
+    }
+
+    private Point2D nearest(Node node, Point2D point2D, Point2D closest) {
+        if (node == null || (closest != null && point2D.distanceSquaredTo(closest) < node.rect.distanceSquaredTo(point2D))) return closest;
+
+        if (point2D.distanceSquaredTo(node.p) < point2D.distanceSquaredTo(closest)) closest = node.p;
+
+        closest = nearest(node.lb, point2D, closest);
+        closest = nearest(node.rt, point2D, closest);
+
+        return closest;
+
+     }
 
     public static void main(String[] args) {
 
-        KdTree tree = new KdTree();
-        System.out.println(tree.isEmpty());
+        // KdTree tree = new KdTree();
+        // System.out.println(tree.isEmpty());
+        //
+        // tree.insert(new Point2D(0.1, 0.5));
+        // tree.insert(new Point2D(0.4, 0.7));
+        // tree.insert(new Point2D(0.4, 0.7));
+        // tree.insert(new Point2D(0.4, 0.7));
+        // tree.insert(new Point2D(0.4, 0.7));
+        // System.out.println(tree.size);
+        // System.out.println(tree.contains(new Point2D(0.1, 0.5)));
+        // System.out.println(tree.contains(new Point2D(0.1, 0.4)));
 
-        tree.insert(new Point2D(0.1, 0.5));
-        tree.insert(new Point2D(0.4, 0.7));
-        tree.insert(new Point2D(0.4, 0.7));
-        tree.insert(new Point2D(0.4, 0.7));
-        tree.insert(new Point2D(0.4, 0.7));
-        System.out.println(tree.size);
-        System.out.println(tree.contains(new Point2D(0.1, 0.5)));
-        System.out.println(tree.contains(new Point2D(0.1, 0.4)));
     }
 
 }
